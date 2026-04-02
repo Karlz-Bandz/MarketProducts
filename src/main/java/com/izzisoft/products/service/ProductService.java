@@ -18,6 +18,16 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional
+    public void increaseProductQuantity(Long productId, int quantity) {
+        Product foundProduct = productRepository.findById(productId).orElseThrow(
+                () -> new ProductNotFoundException("Product not found!")
+        );
+
+        int currentQuantity = foundProduct.getQuantity();
+        foundProduct.setQuantity(currentQuantity + quantity);
+    }
+
+    @Transactional
     public void decreaseProductQuantity(Long productId, int quantity) {
         Product foundProduct = productRepository.findById(productId).orElseThrow(
                 () -> new ProductNotFoundException("Product not found!")

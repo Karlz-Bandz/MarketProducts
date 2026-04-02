@@ -24,6 +24,13 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @PutMapping("/increase/{id}/{quantity}")
+    @PreAuthorize("hasRole('SERVICE')")
+    public ResponseEntity<Void> increaseProductQuantity(@PathVariable("id") Long id, @PathVariable("quantity") int quantity) {
+        productService.increaseProductQuantity(id, quantity);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @PutMapping("/decrease/{id}/{quantity}")
     @PreAuthorize("hasRole('SERVICE')")
     public ResponseEntity<Void> decreaseProductQuantity(@PathVariable("id") Long id, @PathVariable("quantity") int quantity) {
