@@ -8,6 +8,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(ImageFileNotFoundException.class)
+    public ResponseEntity<String> handleImageNotFoundException(ImageFileNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ProductNoImageException.class)
+    public ResponseEntity<String> handleProductNoImageException(ProductNoImageException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ProductQuantityIsTooSmallException.class)
     public ResponseEntity<String> handleProductQuantityIsTooSmallException(ProductQuantityIsTooSmallException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
