@@ -1,9 +1,9 @@
 package com.izzisoft.products.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -31,6 +31,12 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @Value("${jwt.public-key-path}")
+    private String publicKeyPath;
+
+    @Value("${jwt.public-service-key-path}")
+    private String publicServiceKeyPath;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -54,23 +60,20 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
-//                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
-                            jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        ))
+                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+                ))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS
                         )
                 )
-//                .httpBasic(Customizer.withDefaults())
                 .build();
-
     }
 
     @Bean
     public JwtDecoder jwtDecoder() throws Exception {
-        RSAPublicKey usersKey = loadPublicKey("../certs/public.pem");
-        RSAPublicKey serviceKey = loadPublicKey("../certs/service-public.pem");
+        RSAPublicKey usersKey = loadPublicKey(publicKeyPath);
+        RSAPublicKey serviceKey = loadPublicKey(publicServiceKeyPath);
 
         return token -> {
             String issuer = extractIssuer(token);
